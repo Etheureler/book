@@ -87,6 +87,7 @@
             color: #2D2C4D;
             font-weight: 800;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
+            cursor: pointer; /* Indicar que es clickeable */
         }
         .software-box:hover {
             transform: translateY(-5px) scale(1.05);
@@ -153,7 +154,7 @@
             transition: opacity 1s ease-out, transform 1s ease-out;
         }
 
-        /* Estilos del modal/lightbox */
+        /* Estilos del modal de imágenes/lightbox */
         #imageModal {
             position: fixed;
             top: 0;
@@ -206,6 +207,113 @@
         }
         #closeModal:hover {
             background-color: #CC5500; /* Naranja más oscuro al hover */
+            transform: scale(1.1);
+        }
+
+        /* Estilos para los botones de navegación del modal de imágenes */
+        #prevButton, #nextButton {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.3); /* Blanco semi-transparente */
+            backdrop-filter: blur(5px); /* Desenfoque para que resalte */
+            color: #2D2C4D; /* Texto oscuro para buen contraste */
+            border: 2px solid #FF6B00; /* Borde naranja */
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* Completamente redondo */
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10; /* Asegura que estén por encima de la imagen */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            width: 3rem; /* Ancho fijo */
+            height: 3rem; /* Altura fija */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #prevButton:hover, #nextButton:hover {
+            background-color: #FF6B00; /* Naranja al pasar el mouse */
+            color: white; /* Texto blanco al pasar el mouse */
+            transform: translateY(-50%) scale(1.1); /* Ligeramente más grande y mantiene la posición */
+        }
+
+        #prevButton { left: 1rem; }
+        #nextButton { right: 1rem; }
+
+        /* Esconder botones en pantallas pequeñas (opcional, si el swipe es suficiente) */
+        @media (max-width: 768px) {
+            #prevButton, #nextButton {
+                display: none;
+            }
+        }
+
+        /* Estilos del modal de información de software */
+        #softwareInfoModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000; /* Mayor que el modal de imagen */
+            /* hidden by default, shown by jQuery */
+        }
+        #softwareInfoModal .modal-content {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 90%;
+            width: 500px; /* Ancho fijo para el modal de software */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        #softwareInfoModal h3 {
+            font-size: 2.5rem; /* Tamaño grande para el nombre del software */
+            font-weight: 800;
+            color: #2D2C4D;
+            margin-bottom: 0.5rem;
+        }
+        #softwareInfoModal p {
+            font-size: 1.1rem;
+            color: #6B7280;
+            margin-bottom: 1.5rem;
+        }
+        #softwareInfoModal .software-example-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        #closeSoftwareModal {
+            position: absolute;
+            top: -1.5rem;
+            right: -1.5rem;
+            background-color: #FF6B00;
+            color: white;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        #closeSoftwareModal:hover {
+            background-color: #CC5500;
             transform: scale(1.1);
         }
     </style>
@@ -292,11 +400,12 @@
 
             <h3 class="text-3xl md:text-4xl font-bold mb-6 text-center">MANEJO DE SOFTWARE</h3>
             <div class="flex flex-wrap justify-center gap-6">
-                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md">Ps</div>
-                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md">Ai</div>
-                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md">Ae</div>
-                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md">Pr</div>
-                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md">Lr</div>
+                <!-- Se agregó 'data-software-key' para identificar el software al hacer clic -->
+                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md" data-software-key="ps">Ps</div>
+                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md" data-software-key="ai">Ai</div>
+                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md" data-software-key="ae">Ae</div>
+                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md" data-software-key="pr">Pr</div>
+                <div class="software-box p-4 text-3xl md:text-4xl rounded-xl shadow-md" data-software-key="lr">Lr</div>
             </div>
         </section>
 
@@ -332,7 +441,7 @@
         <!-- Sección Trabajos de Ilustración: Galería de Imágenes -->
         <section id="ilustracion" class="p-8 md:p-12 lg:p-16 my-8 bg-white rounded-xl shadow-xl hidden-section">
             <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-8 text-gray-900">TRABAJOS DE ILUSTRACIÓN</h2>
-            <p class="text-lg md:text-xl text-center mb-12 text-gray-700">Incorporando elementos gráficos, tipografías e ilustración para reflejar la marca del cliente.</p>
+            <p class="text-lg md:text-xl text-center mb-12 text-gray-700">Explorando la luz y la sombra para dar vida y profundidad a cada personaje y escenario, resaltando detalles y emociones.</p>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8">
                 <!-- Para añadir tus imágenes de Ilustración:
                      1. Sube tus imágenes al repositorio de GitHub en la carpeta 'images/ilustracion/'.
@@ -355,7 +464,7 @@
         <!-- Sección Animación: Demo Reel y Capturas de Pantalla -->
         <section id="animacion" class="p-8 md:p-12 lg:p-16 my-8 bg-white rounded-xl shadow-xl hidden-section">
             <h2 class="text-4xl md:text-5xl font-extrabold text-center mb-8 text-gray-900">ANIMACIÓN</h2>
-            <p class="text-lg md:text-xl text-center mb-12 text-gray-700">DEMO REEL: <a href="https://youtu.be/KzhaRPSjFPo" target="_blank" class="text-blue-600 hover:underline">https://youtu.be/KzhaRPSjFPo</a></p>
+            <p class="text-lg md:text-xl text-center mb-12 text-gray-700">Creando movimiento y narrativa visual a través de la secuencia de imágenes, desde motion graphics hasta animación de personajes.</p>
             <div class="video-container mb-12">
                 <!-- Reproductor de YouTube para el Demo Reel -->
                 <iframe src="https://www.youtube.com/embed/KzhaRPSjFPo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -385,18 +494,35 @@
 
     </div>
 
-    <!-- Modal/Lightbox Structure -->
+    <!-- Modal/Lightbox Structure para imágenes del portafolio -->
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="relative modal-content">
             <!-- Close button -->
             <button id="closeModal">&times;</button>
             <img id="modalImage" src="" alt="Imagen en tamaño completo">
+            <!-- Navigation buttons -->
+            <button id="prevButton">&lt;</button>
+            <button id="nextButton">&gt;</button>
+        </div>
+    </div>
+
+    <!-- Modal de Información de Software -->
+    <div id="softwareInfoModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="relative modal-content">
+            <button id="closeSoftwareModal">&times;</button>
+            <h3 id="softwareName"></h3>
+            <p id="softwareDescription"></p>
+            <img id="softwareExampleImage" src="" alt="Ejemplo de software" class="software-example-image" onerror="this.onerror=null;this.src='https://placehold.co/400x225/A0A0A0/FFFFFF?text=Ejemplo+no+disponible';">
         </div>
     </div>
 
     <!-- Script de jQuery para funcionalidades -->
     <script>
         $(document).ready(function() {
+            // *** Ocultar modales al inicio, por seguridad ***
+            $('#imageModal').hide();
+            $('#softwareInfoModal').hide();
+
             // Observador de intersección para animar las secciones al entrar en el viewport
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
@@ -419,41 +545,143 @@
                 observer.observe(this);
             });
 
+            // --- Lightbox/Modal functionality for portfolio images ---
+            let galleryImages = []; 
+            let currentImageIndex = 0; 
 
-            // Funcionalidad de Lightbox/Modal
-            // Abrir modal al hacer clic en una imagen de portafolio
+            // Function to display an image in the image modal
+            function showImageInModal(index) {
+                if (galleryImages.length > 0) {
+                    currentImageIndex = (index + galleryImages.length) % galleryImages.length; 
+                    $('#modalImage').attr('src', galleryImages[currentImageIndex]);
+                }
+            }
+
+            // Open image modal on portfolio image click
             $('.portfolio-image').on('click', function() {
-                var imgSrc = $(this).attr('src');
-                $('#modalImage').attr('src', imgSrc);
+                galleryImages = []; 
+                const sectionId = $(this).closest('section').attr('id'); 
+                
+                $('#' + sectionId + ' .portfolio-image').each(function() {
+                    galleryImages.push($(this).attr('src'));
+                });
+
+                currentImageIndex = galleryImages.indexOf($(this).attr('src'));
+                
+                showImageInModal(currentImageIndex);
                 $('#imageModal').fadeIn();
             });
 
-            // Cerrar modal al hacer clic en el botón de cerrar
+            // Close image modal on close button click
             $('#closeModal').on('click', function() {
                 $('#imageModal').fadeOut();
             });
 
-            // Cerrar modal al hacer clic en el fondo del modal (fuera de la imagen)
+            // Close image modal on background click
             $('#imageModal').on('click', function(e) {
-                if (e.target.id === 'imageModal') {
+                if ($(e.target).is('#imageModal')) { 
                     $('#imageModal').fadeOut();
                 }
             });
 
-            // Implementación del scroll suave para enlaces internos
+            // Image navigation buttons
+            $('#prevButton').on('click', function() {
+                showImageInModal(currentImageIndex - 1);
+            });
+
+            $('#nextButton').on('click', function() {
+                showImageInModal(currentImageIndex + 1);
+            });
+
+            // Swipe functionality for image modal
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const swipeThreshold = 50; 
+
+            $('#modalImage').on('touchstart', function(e) {
+                touchStartX = e.originalEvent.touches[0].clientX;
+            });
+
+            $('#modalImage').on('touchmove', function(e) {
+                touchEndX = e.originalEvent.touches[0].clientX;
+            });
+
+            $('#modalImage').on('touchend', function(e) {
+                const diffX = touchEndX - touchStartX;
+
+                if (diffX > swipeThreshold) { 
+                    showImageInModal(currentImageIndex - 1);
+                } else if (diffX < -swipeThreshold) { 
+                    showImageInModal(currentImageIndex + 1);
+                }
+
+                touchStartX = 0;
+                touchEndX = 0;
+            });
+
+            // --- Software Info Modal functionality ---
+            const softwareData = {
+                ps: {
+                    name: "Adobe Photoshop",
+                    description: "Lo uso para retoque, fotomontaje, gráficos y **especialmente para ilustración digital** y arte conceptual.",
+                    example: "https://mir-s3-cdn-cf.behance.net/projects/404/a41df0169222393.Y3JvcCwxNDAwLDEwOTUsMCw0MzM.png" 
+                },
+                ai: {
+                    name: "Adobe Illustrator",
+                    description: "Fundamental para logos, íconos y diseño vectorial. Garantiza nitidez y escalabilidad en branding e ilustración vectorial.",
+                    example: "https://mir-s3-cdn-cf.behance.net/projects/404/6c8e3170701073.Y3JvcCw1MzYsNDIwLDAsMzE0.png" 
+                },
+                ae: {
+                    name: "Adobe After Effects",
+                    description: "Mi elección para motion graphics, efectos visuales y composición. Aporta dinamismo a videos, intros y animaciones de logos.",
+                    example: "https://mir-s3-cdn-cf.behance.net/projects/404/00746e166548773.Y3JvcCwxNDAwLDEwOTUsMCwyNjQ.png" 
+                },
+                pr: {
+                    name: "Adobe Premiere Pro",
+                    description: "Lo utilizo para toda mi edición de video: ensamblar secuencias, añadir transiciones, ajustar audio y corregir color. Esencial para mis reels.",
+                    example: "https://mir-s3-cdn-cf.behance.net/projects/404/c234a4159518001.Y3JvcCwxMDgwLDg0NCwwLDEwMC.jpg" 
+                },
+                lr: {
+                    name: "Adobe Lightroom",
+                    description: "Indispensable para organizar, editar y procesar grandes volúmenes de fotos. Ajusto luz y color rápidamente y mantengo mi librería impecable.",
+                    example: "https://mir-s3-cdn-cf.behance.net/projects/404/814144161726087.Y3JvcCwyNzYwLDIxNTgsMCw4Mw.jpg" 
+                }
+            };
+
+            // Open software info modal on software box click
+            $('.software-box').on('click', function() {
+                const softwareKey = $(this).data('software-key');
+                const info = softwareData[softwareKey];
+
+                if (info) {
+                    $('#softwareName').text(info.name);
+                    $('#softwareDescription').text(info.description);
+                    $('#softwareExampleImage').attr('src', info.example);
+                    $('#softwareInfoModal').fadeIn();
+                }
+            });
+
+            // Close software info modal on close button click
+            $('#closeSoftwareModal').on('click', function() {
+                $('#softwareInfoModal').fadeOut();
+            });
+
+            // Close software info modal on background click
+            $('#softwareInfoModal').on('click', function(e) {
+                if ($(e.target).is('#softwareInfoModal')) {
+                    $('#softwareInfoModal').fadeOut();
+                }
+            });
+
+            // --- Smooth Scroll implementation ---
             $('a.smooth-scroll').on('click', function(event) {
-                // Asegurarse de que el hash tenga un valor antes de intentar el desplazamiento
                 if (this.hash !== "") {
-                    event.preventDefault(); // Prevenir el comportamiento de anclaje predeterminado del navegador
-
-                    var hash = this.hash; // Obtener el hash (#id-de-seccion) del enlace
-
-                    // Usar jQuery's animate() para un desplazamiento suave
+                    event.preventDefault();
+                    var hash = this.hash;
                     $('html, body').animate({
-                        scrollTop: $(hash).offset().top // Desplazarse a la parte superior de la sección
-                    }, 800, function(){ // Duración de la animación (800ms) y callback
-                        // Añadir el hash a la URL después de que la animación termine, si se desea
-                        // window.location.hash = hash;
+                        scrollTop: $(hash).offset().top
+                    }, 800, function(){
+                        // window.location.hash = hash; 
                     });
                 }
             });
